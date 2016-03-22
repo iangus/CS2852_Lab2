@@ -79,14 +79,14 @@ public class Shape {
         return resultList.size();
     }
 
-    private void drawDots(WinPlotter plotter){
+    public void drawDots(WinPlotter plotter){
         plotter.setPenColor(0,0,0);
         for(Dot dot : resultList){
             plotter.drawPoint(dot.getX_comp(),dot.getY_comp());
         }
     }
 
-    private void drawLines(WinPlotter plotter){
+    public void drawLines(WinPlotter plotter){
         plotter.setPenColor(0,0,0);
         for(int i = 0; i < resultList.size(); i++){
             Dot current = resultList.get(i);

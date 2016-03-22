@@ -72,10 +72,10 @@ public class Driver extends JFrame{
      * @param plotter plotter to be set up
      */
     private void initPlotter(WinPlotter plotter){
-        plotter.setWindowTitle(fileName + " Current Dots:" + resultList.size());
+        plotter.setWindowTitle(fileName + " Current Dots:" + shape.getReducedSize());
         plotter.setWindowSize(800,800);
         plotter.setPlotBoundaries(0.0,0.0,1.0,1.0);
-        plotter.setBackgroundColor(255,255,255);
+        plotter.setBackgroundColor(255, 255, 255);
     }
 
     /**
@@ -116,37 +116,36 @@ public class Driver extends JFrame{
         fileButton.addActionListener(e -> {
             selectFile();
             shape = new Shape(readFile);
-            //loadFile();
-            ogPoints.setText("Points in original file: " + dotsList.size());
+            ogPoints.setText("Points in original file: " + shape.getOriginalSize());
         });
 
         dotsButton = new JButton("Dots!");
         dotsButton.addActionListener(e -> {
             try {
-                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                drawDots(plotter);
+                shape.drawDots(plotter);
             } catch (NumberFormatException e1) {
                 JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
-            }catch (IndexOutOfBoundsException e2){
-                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }catch (IllegalArgumentException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         linesButton = new JButton("Lines!");
         linesButton.addActionListener(e -> {
             try {
-                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                drawLines(plotter);
+                shape.drawLines(plotter);
             } catch (NumberFormatException e1) {
                 JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
-            }catch (IndexOutOfBoundsException e2){
-                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }catch (IllegalArgumentException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -201,7 +200,7 @@ public class Driver extends JFrame{
                 }
                 textPoints.setText("" + dotsList.size());
             } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(null,"File could not be found.", "File not found", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "File could not be found.", "File not found", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
