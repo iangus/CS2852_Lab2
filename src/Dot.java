@@ -15,6 +15,8 @@
 public class Dot {
     private double x_comp;
     private double y_comp;
+    public Dot previous;
+    public Dot next;
     public double critVal;
 
     /**
@@ -45,10 +47,8 @@ public class Dot {
 
     /**
      * Calculates the critical value for the dot based off of the dots around it
-     * @param previous the dot preceding the current dot in the image
-     * @param next the dot after the current dot in the image
      */
-    public void calculateCritVal(Dot previous, Dot next){
+    public void calculateCritVal(){
         double d12 = calcDistance(this.getX_comp(), previous.getX_comp(), this.getY_comp(), previous.getY_comp());
         double d23 = calcDistance(this.getX_comp(), next.getX_comp(), this.getY_comp(), next.getY_comp());
         double d13 = calcDistance(previous.getX_comp(), next.getX_comp(), previous.getY_comp(), next.getY_comp());

@@ -2,6 +2,8 @@ import edu.msoe.se1010.winPlotter.WinPlotter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
@@ -37,13 +39,26 @@ public class Shape {
 
                     dotsList.add(new Dot(lineScan.nextDouble(), lineScan.nextDouble()));
                 }
+                for(int i = 0; i < dotsList.size(); i++){
+                    if (i == 0) {
+                        dotsList.get(i).previous = dotsList.get(dotsList.size() - 1);
+                        dotsList.get(i).next = dotsList.get(i + 1);
+                    }else if(i == dotsList.size() - 1){
+                        dotsList.get(i).previous = dotsList.get(i - 1);
+                        dotsList.get(i).next = dotsList.get(0);
+                    }else {
+                        dotsList.get(i).previous = dotsList.get(i - 1);
+                        dotsList.get(i).next = dotsList.get(i + 1);
+                    }
+                }
             } catch (FileNotFoundException e) {
                 JOptionPane.showMessageDialog(null, "File could not be found.", "File not found", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    public void getDesiredDots(int numDesired){
+    public float getDesiredDots(int numDesired){
+        float startNano = System.nanoTime();
         if(numDesired < 3){
             throw new IllegalArgumentException("Cannot reduce number of dots to less than 3. Desired: " + numDesired);
         }else{
@@ -54,10 +69,8 @@ public class Shape {
             while (lessDots.size() > numDesired) {
                 double lowestCrit = 3.0;
                 int lowIndex = -1;
-                for(int i = 1; i<lessDots.size() - 1; i++){
-                    Dot previous = lessDots.get(i - 1);
-                    Dot next = lessDots.get(i + 1);
-                    lessDots.get(i).calculateCritVal(previous, next);
+                for(int i = 0; i<lessDots.size(); i++){
+                    lessDots.get(i).calculateCritVal();
                     if(lessDots.get(i).critVal < lowestCrit){
                         lowestCrit = lessDots.get(i).critVal;
                         lowIndex = i;
@@ -70,6 +83,24 @@ public class Shape {
 
             resultList = lessDots;
         }
+        float endNano = System.nanoTime();
+        return endNano - startNano;
+    }
+
+    public float getDesiredDots2(List<Dot> original, Collection<Dot> result, int numDesired){
+        float startNano = System.nanoTime();
+
+        result.addAll(original);
+
+        while(result.size() > numDesired){
+            Iterator dotIterator = result.iterator();
+            double lowCrit = 3.0;
+            double lowIndex = -1;
+
+
+        }
+        float endNano = System.nanoTime();
+        return endNano - startNano;
     }
 
     public int getOriginalSize(){
