@@ -78,35 +78,6 @@ public class Driver extends JFrame{
         plotter.setBackgroundColor(255, 255, 255);
     }
 
-    /**
-     * Draws dots from the resultList to the specified plotter
-     * @param plotter plotter to be drawn to
-     */
-    private void drawDots(WinPlotter plotter){
-        plotter.setPenColor(0,0,0);
-        for(Dot dot : resultList){
-            plotter.drawPoint(dot.getX_comp(),dot.getY_comp());
-        }
-    }
-
-    /**
-     * Draws lines based off of dots from the resultList to the specified plotter
-     * @param plotter plotter to be drawn to
-     */
-    private void drawLines(WinPlotter plotter){
-        plotter.setPenColor(0,0,0);
-        for(int i = 0; i < resultList.size(); i++){
-            Dot current = resultList.get(i);
-            Dot next;
-            if(i == resultList.size() - 1){
-                next = resultList.get(0);
-            }else{
-                next = resultList.get(i + 1);
-            }
-            plotter.moveTo(current.getX_comp(), current.getY_comp());
-            plotter.drawTo(next.getX_comp(),next.getY_comp());
-        }
-    }
 
     /**
      * Creates the gui components that are to be added to the frame. Adds action listeners to the buttons.
@@ -152,16 +123,16 @@ public class Driver extends JFrame{
         bothButton = new JButton("Both!");
         bothButton.addActionListener(e -> {
             try {
-                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                drawDots(plotter);
-                drawLines(plotter);
+                shape.drawDots(plotter);
+                shape.drawLines(plotter);
             } catch (NumberFormatException e1) {
                 JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
-            }catch (IndexOutOfBoundsException e2){
-                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }catch (IllegalArgumentException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -180,60 +151,6 @@ public class Driver extends JFrame{
         if(returnVal == JFileChooser.APPROVE_OPTION){
             readFile = fc.getSelectedFile();
             fileName = readFile.getName();
-        }
-    }
-
-    /**
-     * Loads the dots from a selected file to the dotsList
-     */
-    private void loadFile(){
-        if(readFile != null){
-            dotsList = new ArrayList<>();
-            try {
-                Scanner fileScan = new Scanner(readFile);
-                Scanner lineScan;
-                while(fileScan.hasNextLine()){
-                    lineScan = new Scanner(fileScan.nextLine());
-                    lineScan.useDelimiter(", |,");
-
-                    dotsList.add(new Dot(lineScan.nextDouble(), lineScan.nextDouble()));
-                }
-                textPoints.setText("" + dotsList.size());
-            } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(null, "File could not be found.", "File not found", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    /**
-     * Eliminates dots until the desired number is reached storing the new list of dots in resultList
-     * @param numDesired number of dots desired
-     */
-    public void getDesiredDots(int numDesired){
-        if(numDesired < 0 || numDesired > dotsList.size()){
-            throw new IndexOutOfBoundsException("Index out of bounds. Index: " + numDesired + " Size: " + dotsList.size());
-        }else{
-            List<Dot> lessDots = new ArrayList<>();
-            lessDots.addAll(dotsList);
-
-
-            while (lessDots.size() > numDesired) {
-                double lowestCrit = 3.0;
-                int lowIndex = -1;
-                for(int i = 1; i<lessDots.size() - 1; i++){
-                    Dot previous = lessDots.get(i - 1);
-                    Dot next = lessDots.get(i + 1);
-                    lessDots.get(i).calculateCritVal(previous, next);
-                    if(lessDots.get(i).critVal < lowestCrit){
-                        lowestCrit = lessDots.get(i).critVal;
-                        lowIndex = i;
-                    }
-                }
-                lessDots.remove(lowIndex);
-            }
-
-
-            resultList = lessDots;
         }
     }
 
