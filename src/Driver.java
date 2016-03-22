@@ -1,9 +1,11 @@
+import edu.msoe.se1010.winPlotter.WinPlotter;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JButton;
@@ -21,16 +23,18 @@ import javax.swing.WindowConstants;
  * Created: 3/15/2016
  */
 public class Driver extends JFrame{
-    JButton fileButton;
-    JButton dotsButton;
-    JButton linesButton;
-    JButton bothButton;
-    JLabel ogPoints;
-    JLabel numPoints;
-    JTextField textPoints;
-    JFileChooser fc = new JFileChooser();
-    File readFile;
-    List<Dot> dotsList = new ArrayList<>();
+    private JButton fileButton;
+    private JButton dotsButton;
+    private JButton linesButton;
+    private JButton bothButton;
+    private JLabel ogPoints;
+    private JLabel numPoints;
+    private JTextField textPoints;
+    private JFileChooser fc = new JFileChooser();
+    private File readFile;
+    private List<Dot> dotsList = new ArrayList<>();
+    private List<Dot> resultList = new ArrayList<>();
+    private WinPlotter plotter;
 
     public Driver(){
         setSize(200,185);
@@ -49,6 +53,34 @@ public class Driver extends JFrame{
         add(bothButton);
     }
 
+    private void initPlotter(WinPlotter plotter){
+        plotter.setWindowSize(800,800);
+        plotter.setPlotBoundaries(0.0,0.0,1.0,1.0);
+        plotter.setBackgroundColor(255,255,255);
+    }
+
+    private void drawDots(WinPlotter plotter){
+        plotter.setPenColor(0,0,0);
+        for(Dot dot : resultList){
+            plotter.drawPoint(dot.getX_comp(),dot.getY_comp());
+        }
+    }
+
+    private void drawLines(WinPlotter plotter){
+        plotter.setPenColor(0,0,0);
+        for(int i = 0; i < resultList.size(); i++){
+            Dot current = resultList.get(i);
+            Dot next;
+            if(i == resultList.size() - 1){
+                next = resultList.get(0);
+            }else{
+                next = resultList.get(i + 1);
+            }
+            plotter.moveTo(current.getX_comp(), current.getY_comp());
+            plotter.drawTo(next.getX_comp(),next.getY_comp());
+        }
+    }
+
     private void createComponents(){
         fileButton = new JButton("Select File");
         fileButton.addActionListener(e -> {
@@ -58,13 +90,32 @@ public class Driver extends JFrame{
         });
 
         dotsButton = new JButton("Dots!");
-        dotsButton.addActionListener(e -> getDesiredDots(Integer.parseInt(textPoints.getText())));
+        dotsButton.addActionListener(e -> {
+            getDesiredDots(Integer.parseInt(textPoints.getText()));
+            plotter = new WinPlotter();
+            plotter.erase();
+            initPlotter(plotter);
+            drawDots(plotter);
+        });
 
         linesButton = new JButton("Lines!");
-        linesButton.addActionListener(e -> getDesiredDots(Integer.parseInt(textPoints.getText())));
+        linesButton.addActionListener(e -> {
+            getDesiredDots(Integer.parseInt(textPoints.getText()));
+            plotter = new WinPlotter();
+            plotter.erase();
+            initPlotter(plotter);
+            drawLines(plotter);
+        });
 
         bothButton = new JButton("Both!");
-        bothButton.addActionListener(e -> getDesiredDots(Integer.parseInt(textPoints.getText())));
+        bothButton.addActionListener(e -> {
+            getDesiredDots(Integer.parseInt(textPoints.getText()));
+            plotter = new WinPlotter();
+            plotter.erase();
+            initPlotter(plotter);
+            drawDots(plotter);
+            drawLines(plotter);
+        });
 
 
         ogPoints = new JLabel("Points in original file: ");
@@ -82,11 +133,17 @@ public class Driver extends JFrame{
 
     private void loadFile(){
         if(readFile != null){
+            dotsList = new ArrayList<>();
             try {
                 Scanner fileScan = new Scanner(readFile);
-                while(fileScan.hasNext()){
-                    dotsList.add(new Dot();
+                Scanner lineScan;
+                while(fileScan.hasNextLine()){
+                    lineScan = new Scanner(fileScan.nextLine());
+                    lineScan.useDelimiter(", |,");
+
+                    dotsList.add(new Dot(lineScan.nextDouble(), lineScan.nextDouble()));
                 }
+                textPoints.setText("" + dotsList.size());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -94,12 +151,13 @@ public class Driver extends JFrame{
     }
 
     public void getDesiredDots(int numDesired){
-        List<Dot> lessDots = dotsList;
-        double lowestCrit = 3.0;
-        int lowIndex = -1;
+        List<Dot> lessDots = new ArrayList<>();
+        lessDots.addAll(dotsList);
 
 
         while (lessDots.size() > numDesired) {
+            double lowestCrit = 3.0;
+            int lowIndex = -1;
             for(int i = 1; i<lessDots.size() - 1; i++){
                 Dot previous = lessDots.get(i - 1);
                 Dot next = lessDots.get(i + 1);
@@ -113,7 +171,7 @@ public class Driver extends JFrame{
         }
 
 
-        dotsList = lessDots;
+        resultList = lessDots;
     }
 
 
@@ -122,4 +180,3 @@ public class Driver extends JFrame{
         driver.setVisible(true);
     }
 }
-//changes yo

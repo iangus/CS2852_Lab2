@@ -24,9 +24,9 @@ public class Dot {
     }
 
     public void calculateCritVal(Dot previous, Dot next){
-        double d12 = calcDistance(this.getX_comp(), previous.getX_comp(), this.getY_comp(), previous.getY_comp());
-        double d23 = calcDistance(this.getX_comp(), next.getX_comp(), this.getY_comp(), next.getY_comp());
-        double d13 = calcDistance(previous.getX_comp(), next.getX_comp(), previous.getY_comp(), next.getY_comp());
+        double d12 = calcDistance(this.getX_comp() * 100, previous.getX_comp() * 100, this.getY_comp() * 100, previous.getY_comp() * 100);
+        double d23 = calcDistance(this.getX_comp() * 100, next.getX_comp() * 100, this.getY_comp() * 100, next.getY_comp() * 100);
+        double d13 = calcDistance(previous.getX_comp() * 100, next.getX_comp() * 100, previous.getY_comp() * 100, next.getY_comp() * 100);
 
         critVal = d12 + d23 - d13;
     }
