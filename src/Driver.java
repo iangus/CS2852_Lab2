@@ -42,8 +42,9 @@ public class Driver extends JFrame{
     private static final JFileChooser fc = new JFileChooser();
     private File readFile;
     private String fileName;
-    private List<Dot> dotsList = new ArrayList<>();
-    private List<Dot> resultList = new ArrayList<>();
+    private Shape shape;
+    //private List<Dot> dotsList = new ArrayList<>();
+    //private List<Dot> resultList = new ArrayList<>();
     private WinPlotter plotter;
 
     /**
@@ -114,7 +115,8 @@ public class Driver extends JFrame{
         fileButton = new JButton("Select File");
         fileButton.addActionListener(e -> {
             selectFile();
-            loadFile();
+            shape = new Shape(readFile);
+            //loadFile();
             ogPoints.setText("Points in original file: " + dotsList.size());
         });
 
