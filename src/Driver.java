@@ -36,6 +36,7 @@ public class Driver extends JFrame{
     private JButton dotsButton;
     private JButton linesButton;
     private JButton bothButton;
+    private JButton timeButton;
     private JLabel ogPoints;
     private JLabel numPoints;
     private JTextField textPoints;
@@ -43,8 +44,6 @@ public class Driver extends JFrame{
     private File readFile;
     private String fileName;
     private Shape shape;
-    //private List<Dot> dotsList = new ArrayList<>();
-    //private List<Dot> resultList = new ArrayList<>();
     private WinPlotter plotter;
 
     /**
@@ -87,6 +86,7 @@ public class Driver extends JFrame{
         fileButton.addActionListener(e -> {
             selectFile();
             shape = new Shape(readFile);
+            textPoints.setText("" + shape.getOriginalSize());
             ogPoints.setText("Points in original file: " + shape.getOriginalSize());
         });
 
@@ -135,6 +135,8 @@ public class Driver extends JFrame{
                 JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        timeButton = new JButton("")
 
 
         ogPoints = new JLabel("Points in original file: ");
