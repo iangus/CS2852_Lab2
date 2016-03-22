@@ -72,9 +72,9 @@ public class Driver extends JFrame{
      */
     private void initPlotter(WinPlotter plotter){
         plotter.setWindowTitle(fileName + " Current Dots:" + resultList.size());
-        plotter.setWindowSize(800,800);
-        plotter.setPlotBoundaries(0.0,0.0,1.0,1.0);
-        plotter.setBackgroundColor(255,255,255);
+        plotter.setWindowSize(800, 800);
+        plotter.setPlotBoundaries(0.0, 0.0, 1.0, 1.0);
+        plotter.setBackgroundColor(255, 255, 255);
     }
 
     /**
@@ -82,7 +82,7 @@ public class Driver extends JFrame{
      * @param plotter plotter to be drawn to
      */
     private void drawDots(WinPlotter plotter){
-        plotter.setPenColor(0,0,0);
+        plotter.setPenColor(0, 0, 0);
         for(Dot dot : resultList){
             plotter.drawPoint(dot.getX_comp(),dot.getY_comp());
         }
@@ -228,6 +228,16 @@ public class Driver extends JFrame{
                         lowIndex = i;
                     }
                 }
+                lessDots.get(0).calculateCritVal(lessDots.get(lessDots.size() - 1),lessDots.get(1));
+                lessDots.get(lessDots.size() - 1).calculateCritVal(lessDots.get(lessDots.size() - 2), lessDots.get(0));
+                if(lessDots.get(0).critVal < lowestCrit){
+                    lowestCrit = lessDots.get(0).critVal;
+                    lowIndex = 0;
+                }
+                if(lessDots.get(lessDots.size() - 1).critVal < lowestCrit){
+                    lowestCrit = lessDots.get(lessDots.size() - 1).critVal;
+                    lowIndex = lessDots.size() - 1;
+                }
                 lessDots.remove(lowIndex);
             }
 
@@ -235,6 +245,7 @@ public class Driver extends JFrame{
             resultList = lessDots;
         }
     }
+
 
 
     /**
