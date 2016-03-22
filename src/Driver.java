@@ -32,6 +32,7 @@ public class Driver extends JFrame{
     private JTextField textPoints;
     private JFileChooser fc = new JFileChooser();
     private File readFile;
+    private String fileName;
     private List<Dot> dotsList = new ArrayList<>();
     private List<Dot> resultList = new ArrayList<>();
     private WinPlotter plotter;
@@ -54,6 +55,7 @@ public class Driver extends JFrame{
     }
 
     private void initPlotter(WinPlotter plotter){
+        plotter.setWindowTitle(fileName + " Current Dots:" + resultList.size());
         plotter.setWindowSize(800,800);
         plotter.setPlotBoundaries(0.0,0.0,1.0,1.0);
         plotter.setBackgroundColor(255,255,255);
@@ -128,6 +130,7 @@ public class Driver extends JFrame{
         int returnVal = fc.showOpenDialog(fileButton);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             readFile = fc.getSelectedFile();
+            fileName = readFile.getName();
         }
     }
 
