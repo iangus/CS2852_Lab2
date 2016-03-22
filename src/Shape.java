@@ -63,6 +63,7 @@ public class Shape {
                         lowIndex = i;
                     }
                 }
+
                 lessDots.remove(lowIndex);
             }
 

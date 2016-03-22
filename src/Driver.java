@@ -64,6 +64,7 @@ public class Driver extends JFrame{
         add(dotsButton);
         add(linesButton);
         add(bothButton);
+        add(timeButton);
     }
 
     /**
@@ -136,7 +137,8 @@ public class Driver extends JFrame{
             }
         });
 
-        timeButton = new JButton("")
+        timeButton = new JButton("Time!");
+        timeButton.addActionListener(e -> System.out.println("time pressed"));
 
 
         ogPoints = new JLabel("Points in original file: ");
