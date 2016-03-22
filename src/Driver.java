@@ -1,3 +1,11 @@
+/**
+ * CS2852 - 041
+ * Spring 2016
+ * Lab 2
+ * Name: Ian Guswiler
+ * Created: 3/15/2016
+ */
+
 import edu.msoe.se1010.winPlotter.WinPlotter;
 import java.awt.FlowLayout;
 import java.io.File;
@@ -12,15 +20,16 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 /**
- * CS2852 - 041
- * Spring 2016
- * Lab 2
- * Name: Ian Guswiler
- * Created: 3/15/2016
+ * Main functioning for program.
+ * Includes gui and WinPlotter initialization
+ *
+ * @author Ian Guswiler
+ * @version 3/22/2016
  */
 public class Driver extends JFrame{
     private JButton fileButton;
@@ -30,13 +39,16 @@ public class Driver extends JFrame{
     private JLabel ogPoints;
     private JLabel numPoints;
     private JTextField textPoints;
-    private JFileChooser fc = new JFileChooser();
+    private static final JFileChooser fc = new JFileChooser();
     private File readFile;
     private String fileName;
     private List<Dot> dotsList = new ArrayList<>();
     private List<Dot> resultList = new ArrayList<>();
     private WinPlotter plotter;
 
+    /**
+     * Constructs a default driver object with predetermined attributes
+     */
     public Driver(){
         setSize(200,185);
         setResizable(false);
@@ -54,6 +66,10 @@ public class Driver extends JFrame{
         add(bothButton);
     }
 
+    /**
+     * Sets up the plotter to be drawn to
+     * @param plotter plotter to be set up
+     */
     private void initPlotter(WinPlotter plotter){
         plotter.setWindowTitle(fileName + " Current Dots:" + resultList.size());
         plotter.setWindowSize(800,800);
@@ -61,6 +77,10 @@ public class Driver extends JFrame{
         plotter.setBackgroundColor(255,255,255);
     }
 
+    /**
+     * Draws dots from the resultList to the specified plotter
+     * @param plotter plotter to be drawn to
+     */
     private void drawDots(WinPlotter plotter){
         plotter.setPenColor(0,0,0);
         for(Dot dot : resultList){
@@ -68,6 +88,10 @@ public class Driver extends JFrame{
         }
     }
 
+    /**
+     * Draws lines based off of dots from the resultList to the specified plotter
+     * @param plotter plotter to be drawn to
+     */
     private void drawLines(WinPlotter plotter){
         plotter.setPenColor(0,0,0);
         for(int i = 0; i < resultList.size(); i++){
@@ -83,6 +107,9 @@ public class Driver extends JFrame{
         }
     }
 
+    /**
+     * Creates the gui components that are to be added to the frame. Adds action listeners to the buttons.
+     */
     private void createComponents(){
         fileButton = new JButton("Select File");
         fileButton.addActionListener(e -> {
@@ -93,30 +120,48 @@ public class Driver extends JFrame{
 
         dotsButton = new JButton("Dots!");
         dotsButton.addActionListener(e -> {
-            getDesiredDots(Integer.parseInt(textPoints.getText()));
-            plotter = new WinPlotter();
-            plotter.erase();
-            initPlotter(plotter);
-            drawDots(plotter);
+            try {
+                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                plotter = new WinPlotter();
+                plotter.erase();
+                initPlotter(plotter);
+                drawDots(plotter);
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+            }catch (IndexOutOfBoundsException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         linesButton = new JButton("Lines!");
         linesButton.addActionListener(e -> {
-            getDesiredDots(Integer.parseInt(textPoints.getText()));
-            plotter = new WinPlotter();
-            plotter.erase();
-            initPlotter(plotter);
-            drawLines(plotter);
+            try {
+                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                plotter = new WinPlotter();
+                plotter.erase();
+                initPlotter(plotter);
+                drawLines(plotter);
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+            }catch (IndexOutOfBoundsException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         bothButton = new JButton("Both!");
         bothButton.addActionListener(e -> {
-            getDesiredDots(Integer.parseInt(textPoints.getText()));
-            plotter = new WinPlotter();
-            plotter.erase();
-            initPlotter(plotter);
-            drawDots(plotter);
-            drawLines(plotter);
+            try {
+                getDesiredDots(Integer.parseInt(textPoints.getText()));
+                plotter = new WinPlotter();
+                plotter.erase();
+                initPlotter(plotter);
+                drawDots(plotter);
+                drawLines(plotter);
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+            }catch (IndexOutOfBoundsException e2){
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Index out of bounds", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
 
@@ -126,6 +171,9 @@ public class Driver extends JFrame{
         textPoints = new JTextField(5);
     }
 
+    /**
+     * Utilizes the JFileChooser to select a file
+     */
     private void selectFile(){
         int returnVal = fc.showOpenDialog(fileButton);
         if(returnVal == JFileChooser.APPROVE_OPTION){
@@ -134,6 +182,9 @@ public class Driver extends JFrame{
         }
     }
 
+    /**
+     * Loads the dots from a selected file to the dotsList
+     */
     private void loadFile(){
         if(readFile != null){
             dotsList = new ArrayList<>();
@@ -148,36 +199,48 @@ public class Driver extends JFrame{
                 }
                 textPoints.setText("" + dotsList.size());
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,"File could not be found.", "File not found", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+    /**
+     * Eliminates dots until the desired number is reached storing the new list of dots in resultList
+     * @param numDesired number of dots desired
+     */
     public void getDesiredDots(int numDesired){
-        List<Dot> lessDots = new ArrayList<>();
-        lessDots.addAll(dotsList);
+        if(numDesired < 0 || numDesired > dotsList.size()){
+            throw new IndexOutOfBoundsException("Index out of bounds. Index: " + numDesired + " Size: " + dotsList.size());
+        }else{
+            List<Dot> lessDots = new ArrayList<>();
+            lessDots.addAll(dotsList);
 
 
-        while (lessDots.size() > numDesired) {
-            double lowestCrit = 3.0;
-            int lowIndex = -1;
-            for(int i = 1; i<lessDots.size() - 1; i++){
-                Dot previous = lessDots.get(i - 1);
-                Dot next = lessDots.get(i + 1);
-                lessDots.get(i).calculateCritVal(previous, next);
-                if(lessDots.get(i).critVal < lowestCrit){
-                    lowestCrit = lessDots.get(i).critVal;
-                    lowIndex = i;
+            while (lessDots.size() > numDesired) {
+                double lowestCrit = 3.0;
+                int lowIndex = -1;
+                for(int i = 1; i<lessDots.size() - 1; i++){
+                    Dot previous = lessDots.get(i - 1);
+                    Dot next = lessDots.get(i + 1);
+                    lessDots.get(i).calculateCritVal(previous, next);
+                    if(lessDots.get(i).critVal < lowestCrit){
+                        lowestCrit = lessDots.get(i).critVal;
+                        lowIndex = i;
+                    }
                 }
+                lessDots.remove(lowIndex);
             }
-            lessDots.remove(lowIndex);
+
+
+            resultList = lessDots;
         }
-
-
-        resultList = lessDots;
     }
 
 
+    /**
+     * Creates a new Driver object and sets it to visible
+     * @param args Ignored
+     */
     public static void main(String[] args) {
         Driver driver = new Driver();
         driver.setVisible(true);
