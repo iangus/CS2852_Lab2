@@ -41,7 +41,7 @@ public class Shape {
                 }
                 for(int i = 0; i < dotsList.size(); i++){
                     if (i == 0) {
-                        dotsList.get(i).previous = dotsList.get(dotsList.size() - 1);
+                        dotsList.get(i).setPrevious(dotsList.get(dotsList.size() - 1));
                         dotsList.get(i).next = dotsList.get(i + 1);
                     }else if(i == dotsList.size() - 1){
                         dotsList.get(i).previous = dotsList.get(i - 1);
@@ -69,11 +69,18 @@ public class Shape {
             while (lessDots.size() > numDesired) {
                 double lowestCrit = 3.0;
                 int lowIndex = -1;
-                for(int i = 0; i<lessDots.size(); i++){
+                /*for(int i = 0; i<lessDots.size(); i++){
                     lessDots.get(i).calculateCritVal();
                     if(lessDots.get(i).critVal < lowestCrit){
                         lowestCrit = lessDots.get(i).critVal;
                         lowIndex = i;
+                    }
+                }*/
+                for(Dot dot : lessDots){
+                    dot.calculateCritVal();
+                    if(dot.critVal < lowestCrit){
+                        lowestCrit = dot.critVal;
+                        lowIndex = lessDots.indexOf(dot);
                     }
                 }
 

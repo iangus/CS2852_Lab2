@@ -15,8 +15,8 @@
 public class Dot {
     private double x_comp;
     private double y_comp;
-    public Dot previous;
-    public Dot next;
+    private Dot previous;
+    private Dot next;
     public double critVal;
 
     /**
@@ -43,6 +43,14 @@ public class Dot {
      */
     public double getY_comp(){
         return y_comp;
+    }
+
+    public void setPrevious(Dot previous) {
+        this.previous = previous;
+    }
+
+    public void setNext(Dot next) {
+        this.next = next;
     }
 
     /**
