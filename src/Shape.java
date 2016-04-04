@@ -42,13 +42,13 @@ public class Shape {
                 for(int i = 0; i < dotsList.size(); i++){
                     if (i == 0) {
                         dotsList.get(i).setPrevious(dotsList.get(dotsList.size() - 1));
-                        dotsList.get(i).next = dotsList.get(i + 1);
+                        dotsList.get(i).setNext(dotsList.get(i + 1));
                     }else if(i == dotsList.size() - 1){
-                        dotsList.get(i).previous = dotsList.get(i - 1);
-                        dotsList.get(i).next = dotsList.get(0);
+                        dotsList.get(i).setPrevious(dotsList.get(i - 1));
+                        dotsList.get(i).setNext(dotsList.get(0));
                     }else {
-                        dotsList.get(i).previous = dotsList.get(i - 1);
-                        dotsList.get(i).next = dotsList.get(i + 1);
+                        dotsList.get(i).setPrevious(dotsList.get(i - 1));
+                        dotsList.get(i).setNext(dotsList.get(i + 1));
                     }
                 }
             } catch (FileNotFoundException e) {
@@ -69,22 +69,25 @@ public class Shape {
             while (lessDots.size() > numDesired) {
                 double lowestCrit = 3.0;
                 int lowIndex = -1;
-                /*for(int i = 0; i<lessDots.size(); i++){
+                for(int i = 0; i<lessDots.size(); i++){
                     lessDots.get(i).calculateCritVal();
                     if(lessDots.get(i).critVal < lowestCrit){
                         lowestCrit = lessDots.get(i).critVal;
                         lowIndex = i;
                     }
-                }*/
-                for(Dot dot : lessDots){
-                    dot.calculateCritVal();
-                    if(dot.critVal < lowestCrit){
-                        lowestCrit = dot.critVal;
-                        lowIndex = lessDots.indexOf(dot);
-                    }
                 }
 
                 lessDots.remove(lowIndex);
+                if(lowIndex == lessDots.size()){
+                    lessDots.get(0).setPrevious(lessDots.get(lessDots.size() - 1));
+                    lessDots.get(lessDots.size() - 1).setNext(lessDots.get(0));
+                }else if(lowIndex == 0){
+                    lessDots.get(0).setPrevious(lessDots.get(lessDots.size() - 1));
+                    lessDots.get(lessDots.size() - 1).setNext(lessDots.get(lowIndex));
+                }else {
+                    lessDots.get(lowIndex - 1).setNext(lessDots.get(lowIndex));
+                    lessDots.get(lowIndex).setPrevious(lessDots.get(lowIndex - 1));
+                }
             }
 
 
@@ -139,4 +142,5 @@ public class Shape {
             plotter.drawTo(next.getX_comp(),next.getY_comp());
         }
     }
+
 }
