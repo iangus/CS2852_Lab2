@@ -9,13 +9,11 @@
 import edu.msoe.se1010.winPlotter.WinPlotter;
 import java.awt.FlowLayout;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -94,7 +92,7 @@ public class Driver extends JFrame{
         dotsButton = new JButton("Dots!");
         dotsButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
@@ -109,7 +107,7 @@ public class Driver extends JFrame{
         linesButton = new JButton("Lines!");
         linesButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
@@ -124,7 +122,7 @@ public class Driver extends JFrame{
         bothButton = new JButton("Both!");
         bothButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(Integer.parseInt(textPoints.getText()));
+                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
@@ -138,7 +136,24 @@ public class Driver extends JFrame{
         });
 
         timeButton = new JButton("Time!");
-        timeButton.addActionListener(e -> System.out.println("time pressed"));
+        timeButton.addActionListener(e -> {
+            try {
+                long indexedArray = shape.getDesiredDots(shape.getDotList(), new ArrayList<>(), Integer.parseInt(textPoints.getText()));
+                long indexedLinked = shape.getDesiredDots(shape.getDotList(), new LinkedList<>(), Integer.parseInt(textPoints.getText()));
+                long iteratedArray = shape.getDesiredDots2(shape.getDotList(), new ArrayList<>(), Integer.parseInt(textPoints.getText()));
+                long iteratedLinked = shape.getDesiredDots2(shape.getDotList(), new LinkedList<>(), Integer.parseInt(textPoints.getText()));
+
+
+                JOptionPane.showMessageDialog(null, "Indexed ArrayList: " + formatTime(indexedArray) + "\n" +
+                        "Indexed LinkedList: " + formatTime(indexedLinked) + "\n" +
+                        "Iterated ArrayList: " + formatTime(iteratedArray) + "\n" +
+                        "Iterated LinkedList: " + formatTime(iteratedLinked));
+            } catch (NumberFormatException e1) {
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException e2) {
+                JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
 
         ogPoints = new JLabel("Points in original file: ");
@@ -156,6 +171,12 @@ public class Driver extends JFrame{
             readFile = fc.getSelectedFile();
             fileName = readFile.getName();
         }
+    }
+
+    private String formatTime(long nanos){
+        SimpleDateFormat sdf = new SimpleDateFormat("00:mm:ss.SSSS");
+        Date date = new Date(TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS));
+        return sdf.format(date);
     }
 
 

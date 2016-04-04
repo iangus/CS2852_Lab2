@@ -45,6 +45,14 @@ public class Dot {
         return y_comp;
     }
 
+    public Dot getPrevious(){
+        return previous;
+    }
+
+    public Dot getNext(){
+        return next;
+    }
+
     public void setPrevious(Dot previous) {
         this.previous = previous;
     }
