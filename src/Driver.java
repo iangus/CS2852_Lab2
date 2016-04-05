@@ -1,7 +1,7 @@
-/**
+/*
  * CS2852 - 041
  * Spring 2016
- * Lab 2
+ * Lab 3
  * Name: Ian Guswiler
  * Created: 3/15/2016
  */
@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -27,7 +28,7 @@ import javax.swing.WindowConstants;
  * Includes gui and WinPlotter initialization
  *
  * @author Ian Guswiler
- * @version 3/22/2016
+ * @version 4/4/2016
  */
 public class Driver extends JFrame{
     private JButton fileButton;
@@ -38,9 +39,6 @@ public class Driver extends JFrame{
     private JLabel ogPoints;
     private JLabel numPoints;
     private JTextField textPoints;
-    private static final JFileChooser fc = new JFileChooser();
-    private File readFile;
-    private String fileName;
     private Shape shape;
     private WinPlotter plotter;
 
@@ -70,7 +68,6 @@ public class Driver extends JFrame{
      * @param plotter plotter to be set up
      */
     private void initPlotter(WinPlotter plotter){
-        plotter.setWindowTitle(fileName + " Current Dots:" + shape.getReducedSize());
         plotter.setWindowSize(800,800);
         plotter.setPlotBoundaries(0.0,0.0,1.0,1.0);
         plotter.setBackgroundColor(255, 255, 255);
@@ -83,55 +80,69 @@ public class Driver extends JFrame{
     private void createComponents(){
         fileButton = new JButton("Select File");
         fileButton.addActionListener(e -> {
-            selectFile();
-            shape = new Shape(readFile);
-            textPoints.setText("" + shape.getOriginalSize());
-            ogPoints.setText("Points in original file: " + shape.getOriginalSize());
+            shape = new Shape(selectFile());
+            textPoints.setText("" + shape.getDotList().size());
+            ogPoints.setText("Points in original file: " + shape.getDotList().size());
         });
 
         dotsButton = new JButton("Dots!");
         dotsButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
+                List<Dot> result = new ArrayList<>();
+                shape.getDesiredDots(shape.getDotList(), result, Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                shape.drawDots(plotter);
+                shape.drawDots(plotter, result);
             } catch (NumberFormatException e1) {
-                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
-            }catch (IllegalArgumentException e2){
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.",
+                        "Number format exception",JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException e2){
                 JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
+            } catch (NullPointerException e3){
+                JOptionPane.showMessageDialog(null, "A shape has not been loaded.", "File not loaded",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
         linesButton = new JButton("Lines!");
         linesButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
+                List<Dot> result = new ArrayList<>();
+                shape.getDesiredDots2(shape.getDotList(), result, Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                shape.drawLines(plotter);
+                shape.drawLines(plotter, result);
             } catch (NumberFormatException e1) {
-                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.",
+                        "Number format exception",JOptionPane.ERROR_MESSAGE);
             }catch (IllegalArgumentException e2){
                 JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
+            } catch (NullPointerException e3){
+                JOptionPane.showMessageDialog(null, "A shape has not been loaded.", "File not loaded",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
         bothButton = new JButton("Both!");
         bothButton.addActionListener(e -> {
             try {
-                shape.getDesiredDots(shape.getDotList(), shape.getResultList(), Integer.parseInt(textPoints.getText()));
+                List<Dot> result = new ArrayList<>();
+                shape.getDesiredDots(shape.getDotList(), result, Integer.parseInt(textPoints.getText()));
                 plotter = new WinPlotter();
                 plotter.erase();
                 initPlotter(plotter);
-                shape.drawDots(plotter);
-                shape.drawLines(plotter);
+                shape.drawDots(plotter, result);
+                shape.drawLines(plotter, result);
             } catch (NumberFormatException e1) {
-                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.",
+                        "Number format exception",JOptionPane.ERROR_MESSAGE);
             }catch (IllegalArgumentException e2){
                 JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
+            } catch (NullPointerException e3){
+                JOptionPane.showMessageDialog(null, "A shape has not been loaded.", "File not loaded",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -149,9 +160,13 @@ public class Driver extends JFrame{
                         "Iterated ArrayList: " + formatTime(iteratedArray) + "\n" +
                         "Iterated LinkedList: " + formatTime(iteratedLinked));
             } catch (NumberFormatException e1) {
-                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.", "Number format exception",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, textPoints.getText() + " is not valid. Please enter a positive integer.",
+                        "Number format exception",JOptionPane.ERROR_MESSAGE);
             } catch (IllegalArgumentException e2) {
                 JOptionPane.showMessageDialog(null, e2.getMessage(), "Illegal Argument", JOptionPane.ERROR_MESSAGE);
+            } catch (NullPointerException e3){
+                JOptionPane.showMessageDialog(null, "A shape has not been loaded.", "File not loaded",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -165,14 +180,21 @@ public class Driver extends JFrame{
     /**
      * Utilizes the JFileChooser to select a file
      */
-    private void selectFile(){
+    private File selectFile(){
+        JFileChooser fc = new JFileChooser();
+        File readFile = null;
         int returnVal = fc.showOpenDialog(fileButton);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             readFile = fc.getSelectedFile();
-            fileName = readFile.getName();
         }
+        return readFile;
     }
 
+    /**
+     * Formats a given long of nanoseconds into the correct HH:mm:ss.SSSS format
+     * @param nanos a long representing an elapsed time in nanoseconds
+     * @return formatted string representation of the given time
+     */
     private String formatTime(long nanos){
         SimpleDateFormat sdf = new SimpleDateFormat("00:mm:ss.SSSS");
         Date date = new Date(TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS));

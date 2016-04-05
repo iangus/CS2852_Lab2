@@ -1,7 +1,7 @@
-/**
+/*
  * CS2825 - 041
  * Spring 2016
- * Lab 2
+ * Lab 3
  * Name: Ian Guswiler
  * Created: 3/15/2016
  */
@@ -10,14 +10,14 @@
  * Represents a single dot from a .pnt file
  *
  * @author Ian Gusiwler
- * @version 3/22/2016
+ * @version 4/4/2016
  */
 public class Dot {
-    private double x_comp;
-    private double y_comp;
+    private final double x_comp;
+    private final double y_comp;
     private Dot previous;
     private Dot next;
-    public double critVal;
+    private double critVal;
 
     /**
      * Constructs a dot with specified x and y components
@@ -59,6 +59,10 @@ public class Dot {
 
     public void setNext(Dot next) {
         this.next = next;
+    }
+
+    public double getCritVal() {
+        return critVal;
     }
 
     /**
